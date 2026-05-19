@@ -315,6 +315,12 @@
             100%{ top:110vh; transform:rotate(720deg) translateX(var(--drift)); opacity:0; }
         }
 
+        /* ===== HIDE iOS VIDEO CONTROLS ===== */
+        video::-webkit-media-controls,
+        video::-webkit-media-controls-panel,
+        video::-webkit-media-controls-play-button,
+        video::-webkit-media-controls-start-playback-button { display:none !important; }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width:360px) { .quiz-opts{ grid-template-columns:1fr; } }
 
@@ -736,8 +742,7 @@ function photoHTML(src) {
     if (/\.(mp4|mov|webm)$/i.test(src)) {
         return `<div style="position:relative;width:100%;height:100%">
             <video src="${src}" autoplay muted playsinline loop
-                style="width:100%;height:100%;object-fit:contain;background:#000;display:block"
-                onclick="event.stopPropagation();this.paused?this.play():this.pause()"></video>
+                style="width:100%;height:100%;object-fit:contain;background:#000;display:block;pointer-events:none"></video>
             <button style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:1.1rem;cursor:pointer;line-height:1;z-index:2"
                 onclick="event.stopPropagation();var v=this.previousElementSibling;v.muted=!v.muted;this.textContent=v.muted?'🔇':'🔊'">🔇</button>
         </div>`;
@@ -751,6 +756,7 @@ function photoHTML(src) {
 function buildPhotoCard(s) {
     const photos = s.photos || [s.ph || '📷'];
     cardPhotoIdx = 0;
+    photos.forEach(src => { if (/\.(jpg|jpeg|png|gif|webp)$/i.test(src)) new Image().src = src; });
     const multi = photos.length > 1;
     const dots = multi
         ? `<div class="photo-nav">${photos.map((_,i) => `<div class="photo-dot${i===0?' active':''}"></div>`).join('')}</div>`
@@ -774,7 +780,13 @@ function nextCardPhoto() {
     if (vid) vid.pause();
     const photos = STOPS[currentStop].photos || [STOPS[currentStop].ph];
     cardPhotoIdx = (cardPhotoIdx + 1) % photos.length;
-    document.getElementById('ph-inner').innerHTML = photoHTML(photos[cardPhotoIdx]);
+    const inner = document.getElementById('ph-inner');
+    inner.style.transition = 'opacity .18s ease';
+    inner.style.opacity = '0';
+    setTimeout(() => {
+        inner.innerHTML = photoHTML(photos[cardPhotoIdx]);
+        inner.style.opacity = '1';
+    }, 180);
     document.querySelectorAll('.photo-dot').forEach((d, i) => d.classList.toggle('active', i === cardPhotoIdx));
 }
 
