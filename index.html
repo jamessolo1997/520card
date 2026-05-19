@@ -435,8 +435,10 @@
         </div>
         <div class="final-msg" id="final-msg">
             你期待已久的卡片來瞜!! <br>
-            往後也許會吵架、會有不愉快，但我想和妳一起經歷所有的體驗。<br>
-            一起去看沒看過的地方，留下更多美好的記憶。<br>
+            往後也許會吵架、會有不愉快<br>
+            但我想和妳一起經歷所有的體驗。<br>
+            一起去看沒看過的地方，<br>
+            留下更多美好的記憶。<br>
             謝謝妳的陪伴、妳的笑聲、還有妳無條件的愛。<br><br>
             <strong>我愛妳 ❤️</strong>
         </div>
@@ -732,7 +734,13 @@ function openCard(i) {
 
 function photoHTML(src) {
     if (/\.(mp4|mov|webm)$/i.test(src)) {
-        return `<video src="${src}" autoplay muted playsinline controls style="width:100%;height:100%;object-fit:contain;background:#000;display:block"></video>`;
+        return `<div style="position:relative;width:100%;height:100%">
+            <video src="${src}" autoplay muted playsinline loop
+                style="width:100%;height:100%;object-fit:contain;background:#000;display:block"
+                onclick="event.stopPropagation();this.paused?this.play():this.pause()"></video>
+            <button style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:1.1rem;cursor:pointer;line-height:1;z-index:2"
+                onclick="event.stopPropagation();var v=this.previousElementSibling;v.muted=!v.muted;this.textContent=v.muted?'🔇':'🔊'">🔇</button>
+        </div>`;
     }
     if (/\.(jpg|jpeg|png|gif|webp)$/i.test(src) || src.startsWith('http') || src.startsWith('./') || src.startsWith('/')) {
         return `<img src="${src}" style="width:100%;height:100%;object-fit:contain;display:block">`;
