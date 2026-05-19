@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>520 Card 💕</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --pink:#ff6b9d; --deep:#e91e8c; --green:#66bb6a;
+            --yellow:#ffd54f; --text:#5a3a4a; --map-green:#7ec87e;
+        }
+        body { font-family:'Noto Serif TC',serif; overflow:hidden; background:#1a0a2e; }
+
+        /* ===== LOADING ===== */
+        #loading {
+            position:fixed; inset:0; background:#1a0a2e;
+            display:flex; align-items:center; justify-content:center; z-index:9999;
+            transition:opacity .8s ease;
+        }
+        #loading.hidden { opacity:0; pointer-events:none; }
+        .ldots { display:flex; gap:10px; }
+        .ldot { width:12px; height:12px; border-radius:50%; animation:ldot .6s ease-in-out infinite alternate; }
+        .ldot:nth-child(1){ background:#ff6b9d; }
+        .ldot:nth-child(2){ background:#ffd54f; animation-delay:.2s; }
+        .ldot:nth-child(3){ background:#66bb6a; animation-delay:.4s; }
+        @keyframes ldot { from{transform:translateY(0);opacity:.4} to{transform:translateY(-15px);opacity:1} }
+
+        /* ===== SCENES ===== */
+        .scene {
+            position:fixed; inset:0; display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            opacity:0; pointer-events:none; transition:opacity .7s ease; overflow:hidden;
+        }
+        .scene.active { opacity:1; pointer-events:all; }
+
+        /* ===== STARS ===== */
+        .stars { position:absolute; inset:0; pointer-events:none; }
+        .star { position:absolute; background:#fff; border-radius:50%; animation:twinkle 2s infinite alternate; }
+        @keyframes twinkle { from{opacity:.15;transform:scale(.7)} to{opacity:1;transform:scale(1.3)} }
+
+        /* ===== PETALS ===== */
+        .petals { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+        .petal { position:absolute; top:-20px; animation:pfall linear infinite; }
+        @keyframes pfall {
+            0%  { top:-20px; transform:rotate(0deg) translateX(0); opacity:.9; }
+            100%{ top:110%;  transform:rotate(720deg) translateX(80px); opacity:0; }
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-pink {
+            background:linear-gradient(135deg,#ff6b9d,#e91e8c); color:#fff; border:none;
+            padding:13px 38px; border-radius:50px; font-size:1.05rem;
+            font-family:'Noto Serif TC',serif; cursor:pointer;
+            box-shadow:0 6px 20px rgba(233,30,140,.45); transition:all .3s;
+            letter-spacing:.05em;
+        }
+        .btn-pink:hover { transform:translateY(-3px); box-shadow:0 10px 30px rgba(233,30,140,.55); }
+        .btn-ghost {
+            background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.35);
+            color:#fff; padding:11px 30px; border-radius:50px; font-size:.95rem;
+            font-family:'Noto Serif TC',serif; cursor:pointer; transition:all .3s;
+        }
+        .btn-ghost:hover { background:rgba(255,255,255,.22); }
+
+        /* ===== PIKMIN ANIMATIONS ===== */
+        .pk-walk  { animation:pkw .45s ease-in-out infinite alternate; display:inline-block; }
+        .pk-bounce{ animation:pkb .85s ease-in-out infinite; display:inline-block; }
+        .pk-happy { animation:pkh .8s ease-in-out infinite; display:inline-block; }
+        @keyframes pkw { from{transform:rotate(-6deg) translateY(0)} to{transform:rotate(6deg) translateY(-4px)} }
+        @keyframes pkb { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+        @keyframes pkh { 0%,100%{transform:rotate(-8deg) scale(1)} 50%{transform:rotate(8deg) scale(1.1)} }
+
+        /* ========================================
+           SCENE 0 – ENVELOPE
+        ======================================== */
+        #s0 {
+            background:radial-gradient(ellipse at center,#2d1b4e,#1a0a2e);
+            transition:background 1.2s ease;
+            flex-direction:column; gap:0;
+        }
+        #s0.opened { background:linear-gradient(160deg,#fff0f7,#fce4ec,#f8bbd0); }
+        .s0-reveal {
+            opacity:0; transform:translateY(18px);
+            transition:opacity .6s ease, transform .6s ease;
+            pointer-events:none;
+        }
+        #s0.opened .s0-reveal { opacity:1; transform:translateY(0); pointer-events:auto; }
+        .env-wrap { display:flex; flex-direction:column; align-items:center; gap:20px; z-index:10; }
+        .env-box {
+            width:200px; height:150px; position:relative; cursor:pointer;
+            animation:efloat 3s ease-in-out infinite;
+            filter:drop-shadow(0 12px 28px rgba(255,107,157,.5));
+        }
+        @keyframes efloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+        .env-body { width:200px; height:150px; background:linear-gradient(160deg,#ff8fab,#ff6b9d); border-radius:8px; position:relative; overflow:hidden; transition:transform .3s; }
+        .env-body:hover { transform:scale(1.04); }
+        .env-bot  { position:absolute; bottom:0; left:0; width:0; height:0; border-left:100px solid transparent; border-right:100px solid transparent; border-bottom:85px solid #e91e8c; z-index:2; }
+        .env-lft  { position:absolute; top:0; left:0; width:0; height:0; border-top:75px solid transparent; border-bottom:75px solid transparent; border-left:100px solid #f06292; }
+        .env-rgt  { position:absolute; top:0; right:0; width:0; height:0; border-top:75px solid transparent; border-bottom:75px solid transparent; border-right:100px solid #f06292; }
+        .env-flap { position:absolute; top:0; left:0; width:0; height:0; border-left:100px solid transparent; border-right:100px solid transparent; border-top:80px solid #f48fb1; transform-origin:top center; transition:transform .6s cubic-bezier(.4,0,.2,1); z-index:3; }
+        .env-box.open .env-flap  { transform:rotateX(180deg); }
+        .env-letter { position:absolute; left:20px; top:15px; width:160px; height:120px; background:#fff; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:2.5rem; z-index:1; box-shadow:0 4px 15px rgba(0,0,0,.2); transition:transform .8s cubic-bezier(.4,0,.2,1); }
+        .env-box.open .env-letter { transform:translateY(-120px); }
+        .env-text { text-align:center; color:#ffd4e5; }
+        .env-text h2 { font-family:'Ma Shan Zheng',serif; font-size:1.6rem; margin-bottom:8px; }
+        .env-text p { font-size:.9rem; color:rgba(255,255,255,.6); animation:blink 2s ease-in-out infinite; }
+        @keyframes blink { 0%,100%{opacity:.6} 50%{opacity:1} }
+
+        .big520 {
+            font-family:'Ma Shan Zheng',serif; font-size:min(20vw,110px);
+            background:linear-gradient(135deg,#ff8fab,#ff6b9d,#e91e8c);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+            line-height:1; animation:glow520 3s ease-in-out infinite alternate;
+            filter:drop-shadow(0 4px 20px rgba(255,107,157,.5));
+            margin-bottom:4px;
+        }
+        @keyframes glow520 {
+            from{filter:drop-shadow(0 4px 15px rgba(255,107,157,.4))}
+            to  {filter:drop-shadow(0 4px 30px rgba(255,107,157,.8))}
+        }
+        .land-sub { font-family:'Ma Shan Zheng',serif; font-size:clamp(1rem,4vw,1.6rem); color:#ffd4e5; margin-bottom:14px; letter-spacing:.12em; }
+        .pk-row   { display:flex; justify-content:center; gap:14px; margin:10px 0 16px; }
+
+        /* ========================================
+           SCENE MAP – PIKMIN MAP
+        ======================================== */
+        #s-map {
+            background:linear-gradient(180deg,#5ba85b 0%,#70c470 30%,#85d485 60%,#9ade9a 100%);
+        }
+        #stops-layer { position:absolute; inset:0; }
+
+        /* Map decorations */
+        .map-deco { position:absolute; pointer-events:none; user-select:none; }
+
+        /* SVG path layer */
+        #map-svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; }
+
+        /* Stop markers */
+        .stop-marker {
+            position:absolute; transform:translate(-50%,-50%);
+            display:flex; flex-direction:column; align-items:center;
+            cursor:pointer; z-index:20; transition:transform .25s ease;
+        }
+        .stop-marker.locked { pointer-events:none; }
+        .stop-marker:active { transform:translate(-50%,-50%) scale(.9); }
+        .stop-flower {
+            width:36px; height:36px; border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.3rem; position:relative;
+            background:rgba(255,255,255,.3); backdrop-filter:blur(2px);
+            border:2px solid rgba(255,255,255,.5);
+            transition:all .3s ease;
+        }
+        .stop-marker.locked .stop-flower { opacity:.35; filter:grayscale(.8); cursor:default; }
+        .stop-marker.next .stop-flower { animation:pulse-stop 1.2s ease-in-out infinite; box-shadow:0 0 0 0 rgba(255,220,0,.8); }
+        @keyframes pulse-stop {
+            0%  { box-shadow:0 0 0 0 rgba(255,220,50,.8); transform:scale(1); }
+            50% { box-shadow:0 0 0 14px rgba(255,220,50,0); transform:scale(1.15); }
+            100%{ box-shadow:0 0 0 0 rgba(255,220,50,0); transform:scale(1); }
+        }
+        .stop-marker.visited .stop-flower { background:rgba(255,255,255,.15); border-color:rgba(255,255,255,.3); opacity:.7; filter:saturate(.5); }
+        .stop-label {
+            font-family:'Ma Shan Zheng',serif; font-size:.7rem; color:#fff;
+            text-shadow:0 1px 4px rgba(0,0,0,.6);
+            margin-top:3px; white-space:nowrap; pointer-events:none;
+        }
+        .stop-marker.locked .stop-label { opacity:.35; }
+
+        /* Pikmin on map */
+        #map-pikmin {
+            position:absolute; z-index:30; pointer-events:none;
+            transition:left .0s, top .0s; /* controlled by JS */
+        }
+        #map-pikmin.walking { animation:mapwalk .4s ease-in-out infinite alternate; }
+        @keyframes mapwalk {
+            from{ transform:translateY(0); }
+            to  { transform:translateY(-5px); }
+        }
+        #map-pikmin.face-left { transform:scaleX(-1); }
+        #map-pikmin.walking.face-left { animation:mapwalk-l .4s ease-in-out infinite alternate; }
+        @keyframes mapwalk-l {
+            from{ transform:scaleX(-1) translateY(0); }
+            to  { transform:scaleX(-1) translateY(-5px); }
+        }
+
+        /* Map top bar */
+        .map-bar {
+            position:absolute; top:14px; left:14px;
+            background:rgba(255,255,255,.25); backdrop-filter:blur(6px);
+            border-radius:20px; padding:5px 14px;
+            font-family:'Ma Shan Zheng',serif; font-size:.9rem; color:#fff;
+            text-shadow:0 1px 4px rgba(0,0,0,.4);
+            z-index:40; white-space:nowrap;
+            border:1px solid rgba(255,255,255,.4);
+        }
+
+        /* Grown flowers on map */
+        .map-grown-flower {
+            position:absolute; pointer-events:none; z-index:5;
+            transform-origin:bottom center;
+            animation:flower-grow .7s cubic-bezier(.175,.885,.32,1.275) forwards;
+        }
+        @keyframes flower-grow {
+            0%  { transform:scale(0) translateY(8px); opacity:0; }
+            60% { transform:scale(1.2) translateY(-2px); opacity:1; }
+            100%{ transform:scale(1) translateY(0); opacity:1; }
+        }
+
+        /* ========================================
+           CARD POPUP (photo / quiz)
+        ======================================== */
+        .card-overlay {
+            position:absolute; inset:0; z-index:50;
+            background:rgba(0,0,0,.45); backdrop-filter:blur(3px);
+            display:flex; align-items:flex-end; justify-content:center;
+            opacity:0; pointer-events:none; transition:opacity .35s ease;
+        }
+        .card-overlay.show { opacity:1; pointer-events:all; }
+        .card-sheet {
+            background:#fff; width:100%; max-width:420px;
+            border-radius:24px 24px 0 0;
+            padding:20px 20px 36px;
+            transform:translateY(100%); transition:transform .4s cubic-bezier(.4,0,.2,1);
+            max-height:85vh; overflow-y:auto;
+        }
+        .card-overlay.show .card-sheet { transform:translateY(0); }
+        .card-drag { width:40px; height:4px; background:#e0e0e0; border-radius:2px; margin:0 auto 16px; }
+        .card-title { font-family:'Ma Shan Zheng',serif; font-size:1.4rem; color:#c2185b; text-align:center; margin-bottom:12px; }
+
+        /* Photo placeholder */
+        .photo-frame {
+            width:100%; aspect-ratio:4/3; border-radius:14px; overflow:hidden;
+            background:linear-gradient(135deg,#fce4ec,#f8bbd0);
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            margin-bottom:14px; border:3px solid #fff;
+            box-shadow:0 4px 20px rgba(0,0,0,.12);
+            position:relative;
+        }
+        .photo-frame img { width:100%; height:100%; object-fit:cover; display:block; }
+        .photo-frame .ph-icon { font-size:3.5rem; margin-bottom:8px; }
+        .photo-frame .ph-label { font-size:.85rem; color:#ad1457; }
+
+        /* Polaroid tape */
+        .photo-tape {
+            position:absolute; top:-8px; left:50%; transform:translateX(-50%) rotate(-3deg);
+            width:60px; height:18px; background:rgba(255,242,0,.7); border-radius:2px;
+        }
+        .card-caption { text-align:center; font-size:.95rem; color:#5a3a4a; line-height:1.7; margin-bottom:18px; }
+        .card-date    { text-align:center; font-size:.75rem; color:#aaa; margin-bottom:14px; }
+
+        /* ===== PHOTO GALLERY ===== */
+        .photo-tappable { cursor:pointer; user-select:none; }
+        .photo-tap-hint {
+            position:absolute; bottom:10px; right:12px;
+            background:rgba(0,0,0,.35); color:#fff;
+            font-size:.72rem; padding:3px 10px; border-radius:12px;
+            pointer-events:none;
+        }
+        .photo-nav { display:flex; justify-content:center; gap:8px; margin:-8px 0 14px; }
+        .photo-dot {
+            width:8px; height:8px; border-radius:50%;
+            background:#f8bbd0; transition:all .3s; cursor:pointer;
+        }
+        .photo-dot.active { background:#e91e8c; transform:scale(1.3); }
+        .photo-inner {
+            width:100%; height:100%;
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+        }
+
+        /* ===== QUIZ inside card ===== */
+        .quiz-progress { width:100%; height:6px; background:#fce4ec; border-radius:3px; margin-bottom:14px; overflow:hidden; }
+        .quiz-bar      { height:100%; background:linear-gradient(90deg,#ff6b9d,#e91e8c); border-radius:3px; transition:width .5s ease; }
+        .quiz-q  { font-family:'Ma Shan Zheng',serif; font-size:1.15rem; color:#5a3a4a; text-align:center; margin-bottom:16px; min-height:48px; line-height:1.5; }
+        .quiz-opts { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:12px; }
+        .quiz-opt {
+            background:#fff; border:2px solid #f8bbd0; border-radius:12px;
+            padding:10px 6px; cursor:pointer; font-family:'Noto Serif TC',serif;
+            font-size:.85rem; color:#5a3a4a; transition:all .25s; box-shadow:0 2px 8px rgba(0,0,0,.05);
+        }
+        .quiz-opt:hover  { border-color:#ff6b9d; background:#fff0f5; transform:translateY(-2px); }
+        .quiz-opt.correct{ background:#e8f5e9; border-color:#4caf50; color:#2e7d32; }
+        .quiz-opt.wrong  { background:#fce4ec; border-color:#f44336; color:#c62828; }
+        .quiz-fb { font-size:.85rem; color:#c2185b; font-style:italic; text-align:center; min-height:24px; margin-bottom:10px; }
+        .quiz-score-msg  { font-family:'Ma Shan Zheng',serif; font-size:1.2rem; color:#c2185b; text-align:center; margin-bottom:14px; }
+
+        /* ========================================
+           FINAL OVERLAY
+        ======================================== */
+        #final-overlay {
+            position:absolute; inset:0; z-index:60;
+            background:radial-gradient(ellipse at center,#2d1b4e,#1a0a2e);
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            padding:30px 28px; text-align:center;
+            opacity:0; pointer-events:none; transition:opacity .8s ease;
+        }
+        #final-overlay.show { opacity:1; pointer-events:all; }
+        .final-heart { width:120px; height:120px; animation:heartbeat 1.5s ease-in-out infinite; margin-bottom:12px; border-radius:50%; overflow:hidden; }
+        @keyframes heartbeat {
+            0%,100%{transform:scale(1)} 14%{transform:scale(1.18)} 28%{transform:scale(1)} 42%{transform:scale(1.18)} 70%{transform:scale(1)}
+        }
+        .final-title { font-family:'Ma Shan Zheng',serif; font-size:clamp(1.4rem,5vw,2.2rem); color:#ffd4e5; margin-bottom:16px; }
+        .final-pk-row { display:flex; justify-content:center; gap:14px; margin:10px 0 18px; }
+        .final-msg { color:rgba(255,212,229,.88); font-size:clamp(.88rem,3vw,1.05rem); line-height:2; margin-bottom:22px; }
+        .final-msg strong { color:#ffd4e5; font-size:1.2em; }
+
+        /* ===== CONFETTI ===== */
+        .cbit {
+            position:fixed; top:-12px;
+            animation:cfall linear forwards; z-index:70; pointer-events:none;
+        }
+        @keyframes cfall {
+            0%  { top:-12px; transform:rotate(0deg) translateX(0); opacity:1; }
+            100%{ top:110vh; transform:rotate(720deg) translateX(var(--drift)); opacity:0; }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width:360px) { .quiz-opts{ grid-template-columns:1fr; } }
+
+        /* ===== PATH ARROW HELPER ===== */
+        .path-arrow { position:absolute; font-size:1rem; animation:arrow-pulse 1s ease-in-out infinite; pointer-events:none; color:rgba(255,255,255,.7); }
+        @keyframes arrow-pulse { 0%,100%{opacity:.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.15)} }
+    </style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loading">
+    <div style="text-align:center">
+        <div style="font-family:'Ma Shan Zheng',serif;color:#ffd4e5;font-size:1.4rem;margin-bottom:22px">正在準備驚喜 ✨</div>
+        <div class="ldots"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div></div>
+    </div>
+</div>
+
+<!-- ==================== SCENE 0 – 開場（融合） ==================== -->
+<div class="scene active" id="s0">
+    <div class="stars" id="stars0"></div>
+    <div class="petals" id="p0"></div>
+    <!-- 角落裝飾花（開啟後出現） -->
+    <div class="map-deco s0-reveal" style="top:8px;left:10px;font-size:2.4rem;animation:pkh 3s ease-in-out infinite alternate;transition-delay:.8s">🌸</div>
+    <div class="map-deco s0-reveal" style="top:8px;right:10px;font-size:2.4rem;animation:pkh 3s ease-in-out infinite alternate;animation-delay:.5s;transition-delay:.8s">🌸</div>
+
+    <div class="env-wrap">
+        <!-- 520 標題（開啟後出現） -->
+        <div class="big520 s0-reveal" style="transition-delay:.2s">520</div>
+        <div class="land-sub s0-reveal" style="transition-delay:.35s">給最特別的妳</div>
+
+        <!-- 信封（始終顯示） -->
+        <div class="env-box" id="env-box" onclick="openEnvelope()">
+            <div class="env-body">
+                <div class="env-letter">💌</div>
+                <div class="env-bot"></div>
+                <div class="env-lft"></div>
+                <div class="env-rgt"></div>
+                <div class="env-flap"></div>
+            </div>
+        </div>
+
+        <!-- 提示文字（開啟前顯示，開啟後淡出） -->
+        <div class="env-text" id="env-hint">
+            <h2>有一封信在等妳 ✨</h2>
+            <p>點擊信封打開</p>
+        </div>
+
+        <!-- 皮克敏 + 按鈕（開啟後出現） -->
+        <div class="pk-row s0-reveal" style="transition-delay:.55s">
+            <span class="pk-walk">
+                <img src="kirby-runningpress-start-final.gif" width="76" height="76">
+            </span>
+            <span class="pk-bounce" style="animation-delay:.25s">
+                <img src="kirby-runningpress-start-final.gif" width="76" height="76">
+            </span>
+            <span class="pk-walk" style="animation-delay:.5s">
+                <img src="kirby-runningpress-start-final.gif" width="76" height="76">
+            </span>
+        </div>
+
+        <button class="btn-pink s0-reveal" style="transition-delay:.7s" onclick="goScene('s-map')">出發冒險 🗺️</button>
+    </div>
+</div>
+
+<!-- ==================== SCENE MAP ==================== -->
+<div class="scene" id="s-map">
+
+    <!-- Grass decorations -->
+    <div class="map-deco" style="top:5%;left:5%;font-size:1.4rem;opacity:.6;transform:rotate(-15deg)">🍄</div>
+    <div class="map-deco" style="top:12%;right:8%;font-size:1.2rem;opacity:.5;transform:rotate(10deg)">🍀</div>
+    <div class="map-deco" style="top:28%;left:8%;font-size:1.1rem;opacity:.5;transform:rotate(-20deg)">🌿</div>
+    <div class="map-deco" style="top:35%;right:5%;font-size:1.3rem;opacity:.55;transform:rotate(8deg)">🪨</div>
+    <div class="map-deco" style="top:50%;left:4%;font-size:1.2rem;opacity:.5;transform:rotate(-5deg)">🌼</div>
+    <div class="map-deco" style="top:62%;right:7%;font-size:1.0rem;opacity:.5;transform:rotate(15deg)">🍀</div>
+    <div class="map-deco" style="top:72%;left:9%;font-size:1.3rem;opacity:.5;transform:rotate(-10deg)">🌸</div>
+    <div class="map-deco" style="top:80%;right:10%;font-size:1.1rem;opacity:.5;transform:rotate(20deg)">🌿</div>
+    <div class="map-deco" style="top:18%;left:42%;font-size:.9rem;opacity:.45;transform:rotate(5deg)">🌻</div>
+    <div class="map-deco" style="top:55%;right:30%;font-size:.9rem;opacity:.45;transform:rotate(-12deg)">🌸</div>
+
+    <!-- SVG path layer (drawn in JS) -->
+    <svg id="map-svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+
+    <!-- Stop markers (injected by JS) -->
+    <div id="stops-layer"></div>
+
+    <!-- Pikmin captain -->
+    <div id="map-pikmin" style="width:72px;height:72px">
+        <img src="kirby-runningpress-start-final.gif" width="72" height="72" style="display:block">
+    </div>
+
+    <!-- Top progress bar -->
+    <div class="map-bar" id="map-bar">停留點 0 / 7</div>
+
+    <!-- Card overlay (bottom sheet) -->
+    <div class="card-overlay" id="card-overlay">
+        <div class="card-sheet">
+            <div class="card-drag"></div>
+            <div id="card-content"></div>
+        </div>
+    </div>
+
+    <!-- Final overlay -->
+    <div id="final-overlay">
+        <div class="stars" id="fstars"></div>
+        <div class="final-heart"><img src="./photos/fully-kirby.png" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+        <div class="final-title" id="final-title">謝謝妳這一年多</div>
+        <div class="final-pk-row">
+            <span class="pk-happy" style="animation-delay:0s">
+                <img src="kirby-runningpress-start-final.gif" width="76" height="76">
+            </span>
+            <span class="pk-bounce" style="animation-delay:.3s">
+                <img src="kirby-runningpress-start-final.gif" width="76" height="76">
+            </span>
+            <span class="pk-happy" style="animation-delay:.6s">
+                <img src="kirby-runningpress-start-final.gif" width="76" height="76">
+            </span>
+        </div>
+        <div class="final-msg" id="final-msg">
+            你期待已久的卡片來瞜!! <br>
+            往後也許會吵架、會有不愉快，但我想和妳一起經歷所有的體驗。<br>
+            一起去看沒看過的地方，留下更多美好的記憶。<br>
+            謝謝妳的陪伴、妳的笑聲、還有妳無條件的愛。<br><br>
+            <strong>我愛妳 ❤️</strong>
+        </div>
+        <button class="btn-ghost" onclick="restartMap()">從頭再走一次 🔄</button>
+    </div>
+</div>
+
+<script>
+// =====================================================
+//  STOP DATA  (modify content here)
+// =====================================================
+const STOPS = [
+    {
+        x:50, y:90,
+        icon:'🌿', label:'出發',
+        type:'start'
+    },
+    {
+        x:22, y:78,
+        icon:'💕', label:'故事的開始',
+        type:'photo',
+        photos:['./photos/1-1.mov', './photos/1-2.jpg', './photos/1-3.jpg'], caption:'擺攤的那時候，沒想這麼多，只覺得想好好認識你😊\n沒想到後來會這麼快就走到一起了 💕'
+    },
+    {
+        x:76, y:67,
+        icon:'📸', label:'第一次拍貼機',
+        type:'photo',
+        photos:['./photos/2-1.gif', './photos/2-2.jpg'], caption:'第一次一起拍貼機🎞️\n 我還不敢怎麼靠近，還是妳拉著我的手靠過來!!😳'
+    },
+    {
+        x:22, y:56,
+        icon:'🌼', label:'第一次看花海',
+        type:'photo',
+        photos:['./photos/3-1.jpg', './photos/3-2.jpg', './photos/3-3.jpg'], caption:'還記得那天，說走就走的花海🌼\n 那天很幸運還遇到路人印拍貼給我們!! '
+    },
+    {
+        x:76, y:44,
+        icon:'🎆', label:'第一次跨年',
+        type:'photo',
+        photos:['./photos/4-1.mov', './photos/4-2.mov', './photos/4-3.mov' ], caption:'在中央公園，一起看煙火那個瞬間\n覺得新的一年有妳真好 ✨ \n還有最好玩的溜滑梯😆'
+    },
+    {
+        x:22, y:33,
+        icon:'🎂', label:'第一次做蛋糕',
+        type:'photo',
+        photos:['./photos/5-1.jpg', './photos/5-2.jpg', './photos/5-3.jpg', './photos/5-4.jpg'], caption:'一起手忙腳亂做蛋糕\n雖然沒這麼美味，但過程超級好玩!! 🍰'
+    },
+    {
+        x:74, y:22,
+        icon:'✈️', label:'第一次出國',
+        type:'photo',
+        photos:['./photos/6-1.jpg', './photos/6-2.jpg', './photos/6-3.jpg','./photos/6-4.jpg', './photos/6-5.jpg', './photos/6-6.jpg'], caption:'第一次一起出國!!\n過程中意外的沒怎麼吵架\n以後還要一起去看很多地方!!'
+    },
+    {
+        x:28, y:12,
+        icon:'🎮', label:'愛情問答',
+        type:'quiz'
+    },
+    {
+        x:50, y:4,
+        icon:'💕', label:'給妳的話',
+        type:'final'
+    }
+];
+
+// =====================================================
+//  QUIZ DATA  (modify questions here)
+// =====================================================
+const QUIZ = [
+    {
+        q:'我們第一次自己約出去是去哪裡？',
+        opts:['吃羊肉湯 🍲','旗津看海 🌊','健身房運動 🏋️','咖啡廳 ☕'],
+        correct:0,
+        fb:['那頓飯好吃嗎😆','旗津是第二次喔!!','答錯了!!','咖啡廳是其他天喔!!']
+    },
+    {
+        q:'你男朋友是什麼星座的',
+        opts:['牡羊座 ♈','金牛座 ♉','天蠍座 ♏','巨蟹座 ♋'],
+        correct:2,
+        fb:['我也很熱情，但答錯!!','我很穩重，但答錯!!','對！天蠍座最神秘又專情','我也超級顧家，但答錯!!']
+    },
+    {
+        q:'我房間第一隻娃娃是什麼？',
+        opts:['星星 ⭐','猩猩 🦧','猴子 🐒','兔子 🐇'],
+        correct:1,
+        fb:['答錯了!!','對對對!!','猴子是原本要買的!!','答錯了!!']
+    },
+    {
+        q:'什麼店員會做出最好吃的烤魷魚🦑？',
+        opts:['包手的店員 🍾','毛很長的店員 🦧','一言不發的店員 🤫','長得像魷魚的店員 🦑'],
+        correct:2,
+        fb:['他適合煮鐵板燒','他是毛怪!!','對對對!!','居然吃同類一定不美味']
+    }
+];
+
+// =====================================================
+//  STATE
+// =====================================================
+let currentScene = 's0';
+let pikX = STOPS[0].x, pikY = STOPS[0].y;
+let currentStop = 0;          // which stop Pikmin is AT
+let unlockedStop = 1;         // which stop is NEXT (clickable)
+let isWalking = false;
+let quizIdx = 0, quizScore = 0;
+let cardPhotoIdx = 0;
+
+// =====================================================
+//  SCENE NAVIGATION
+// =====================================================
+function goScene(id) {
+    document.getElementById(currentScene).classList.remove('active');
+    document.getElementById(id).classList.add('active');
+    currentScene = id;
+    if (id === 's-map') initMap();
+}
+
+function openEnvelope() {
+    const box = document.getElementById('env-box');
+    if (box.classList.contains('open')) return; // 防止重複點擊
+    box.classList.add('open');
+    // 隱藏提示文字
+    const hint = document.getElementById('env-hint');
+    hint.style.transition = 'opacity .4s ease';
+    hint.style.opacity = '0';
+    // 觸發場景轉換：深色背景→粉色，並顯示隱藏內容
+    setTimeout(() => {
+        hint.style.display = 'none';
+        document.getElementById('s0').classList.add('opened');
+        spawnPetals('p0');
+    }, 600);
+}
+
+// =====================================================
+//  MAP INIT
+// =====================================================
+function initMap() {
+    if (document.getElementById('stops-layer').childElementCount > 0) return;
+    drawPath();
+    renderStops();
+    placePikmin(STOPS[0].x, STOPS[0].y, false);
+}
+
+function drawPath() {
+    const svg = document.getElementById('map-svg');
+    // Build smooth path through all stops (cubic bezier)
+    let d = `M ${STOPS[0].x} ${STOPS[0].y}`;
+    for (let i = 1; i < STOPS.length; i++) {
+        const prev = STOPS[i-1], cur = STOPS[i];
+        const cx1 = prev.x + (cur.x - prev.x) * 0.4;
+        const cy1 = prev.y + (cur.y - prev.y) * 0.0;
+        const cx2 = prev.x + (cur.x - prev.x) * 0.6;
+        const cy2 = prev.y + (cur.y - prev.y) * 1.0;
+        d += ` C ${cx1} ${cy1}, ${cx2} ${cy2}, ${cur.x} ${cur.y}`;
+    }
+    // Shadow / dirt path
+    const shadow = document.createElementNS('http://www.w3.org/2000/svg','path');
+    shadow.setAttribute('d', d);
+    shadow.setAttribute('stroke', 'rgba(0,0,0,.18)');
+    shadow.setAttribute('stroke-width', '5');
+    shadow.setAttribute('fill', 'none');
+    shadow.setAttribute('stroke-linecap', 'round');
+    shadow.setAttribute('stroke-linejoin', 'round');
+    shadow.setAttribute('stroke-dasharray', '0');
+    svg.appendChild(shadow);
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', d);
+    path.setAttribute('stroke', '#c8a87a');
+    path.setAttribute('stroke-width', '3.5');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('stroke-linejoin', 'round');
+    path.setAttribute('stroke-dasharray', '6 4');
+    svg.appendChild(path);
+}
+
+function renderStops() {
+    const layer = document.getElementById('stops-layer');
+    layer.innerHTML = '';
+    STOPS.forEach((s, i) => {
+        if (i === 0) return; // start = where Pikmin stands
+        const div = document.createElement('div');
+        div.className = 'stop-marker ' + getStopClass(i);
+        div.id = 'stop-' + i;
+        div.style.left = s.x + '%';
+        div.style.top  = s.y + '%';
+        div.innerHTML = `
+            <div class="stop-flower">${s.icon}</div>
+            <div class="stop-label">${s.label}</div>`;
+        div.onclick = () => clickStop(i);
+        layer.appendChild(div);
+    });
+}
+
+function getStopClass(i) {
+    if (i < unlockedStop) return 'visited';
+    if (i === unlockedStop) return 'next';
+    return 'locked';
+}
+
+function refreshStops() {
+    for (let i = 1; i < STOPS.length; i++) {
+        const el = document.getElementById('stop-' + i);
+        if (el) {
+            el.className = 'stop-marker ' + getStopClass(i);
+            el.onclick = i === unlockedStop ? () => clickStop(i) : null;
+        }
+    }
+    const visited = unlockedStop - 1;
+    document.getElementById('map-bar').textContent =
+        `停留點 ${Math.max(0, visited)} / ${STOPS.length - 1}`;
+}
+
+// =====================================================
+//  PIKMIN MOVEMENT
+// =====================================================
+function placePikmin(x, y, animate) {
+    const pk = document.getElementById('map-pikmin');
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const px = (x / 100) * vw - 36;
+    const py = (y / 100) * vh - 72;
+    if (!animate) {
+        pk.style.transition = 'none';
+        pk.style.left = px + 'px';
+        pk.style.top  = py + 'px';
+    } else {
+        const dist = Math.sqrt(Math.pow((x - pikX) * vw / 100, 2) + Math.pow((y - pikY) * vh / 100, 2));
+        const duration = Math.max(600, Math.min(2200, dist * 3.5));
+
+        // Face direction
+        pk.classList.remove('face-left', 'walking');
+        if (x < pikX) pk.classList.add('face-left');
+        pk.classList.add('walking');
+
+        // Animate with rAF step interpolation
+        const startX = pikX, startY = pikY;
+        const startT = performance.now();
+        function step(now) {
+            const t = Math.min((now - startT) / duration, 1);
+            const eased = t < 0.5 ? 2*t*t : -1+(4-2*t)*t; // ease-in-out
+            const cx = startX + (x - startX) * eased;
+            const cy = startY + (y - startY) * eased;
+            pk.style.transition = 'none';
+            pk.style.left = ((cx / 100) * vw - 22) + 'px';
+            pk.style.top  = ((cy / 100) * vh - 60) + 'px';
+            if (t < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+
+        return duration;
+    }
+    pikX = x; pikY = y;
+    return 0;
+}
+
+function clickStop(i) {
+    if (isWalking || i !== unlockedStop) return;
+    isWalking = true;
+    growFlowersNear(i); // 點下去立刻沿路長花
+
+    const target = STOPS[i];
+    const dur = placePikmin(target.x, target.y, true);
+
+    setTimeout(() => {
+        pikX = target.x; pikY = target.y;
+        isWalking = false;
+        currentStop = i;
+        const pk = document.getElementById('map-pikmin');
+        pk.classList.remove('walking');
+        pk.classList.remove('face-left');
+        openCard(i);
+    }, dur + 80);
+}
+
+// =====================================================
+//  CARD POPUP
+// =====================================================
+function openCard(i) {
+    const s = STOPS[i];
+    const content = document.getElementById('card-content');
+    if (s.type === 'photo') {
+        content.innerHTML = buildPhotoCard(s);
+    } else if (s.type === 'quiz') {
+        quizIdx = 0; quizScore = 0;
+        content.innerHTML = buildQuizCard();
+        showQuizQuestion();
+    } else if (s.type === 'final') {
+        showFinal();
+        return;
+    }
+    document.getElementById('card-overlay').classList.add('show');
+}
+
+function photoHTML(src) {
+    if (/\.(mp4|mov|webm)$/i.test(src)) {
+        return `<video src="${src}" autoplay muted playsinline controls style="width:100%;height:100%;object-fit:contain;background:#000;display:block"></video>`;
+    }
+    if (/\.(jpg|jpeg|png|gif|webp)$/i.test(src) || src.startsWith('http') || src.startsWith('./') || src.startsWith('/')) {
+        return `<img src="${src}" style="width:100%;height:100%;object-fit:contain;display:block">`;
+    }
+    return `<div class="ph-icon">${src}</div><div class="ph-label">（照片將會放在這裡）</div>`;
+}
+
+function buildPhotoCard(s) {
+    const photos = s.photos || [s.ph || '📷'];
+    cardPhotoIdx = 0;
+    const multi = photos.length > 1;
+    const dots = multi
+        ? `<div class="photo-nav">${photos.map((_,i) => `<div class="photo-dot${i===0?' active':''}"></div>`).join('')}</div>`
+        : '';
+    return `
+        <div class="card-title">${s.label}</div>
+        <div class="photo-frame${multi?' photo-tappable':''}" id="ph-frame" ${multi?'onclick="nextCardPhoto()"':''}>
+            <div class="photo-tape"></div>
+            <div class="photo-inner" id="ph-inner">${photoHTML(photos[0])}</div>
+            ${multi?'<div class="photo-tap-hint">點擊換張 →</div>':''}
+        </div>
+        ${dots}
+        <div class="card-caption">${s.caption.replace(/\n/g,'<br>')}</div>
+        <div style="text-align:center">
+            <button class="btn-pink" onclick="closeCard()">繼續前進 →</button>
+        </div>`;
+}
+
+function nextCardPhoto() {
+    const vid = document.querySelector('#ph-inner video');
+    if (vid) vid.pause();
+    const photos = STOPS[currentStop].photos || [STOPS[currentStop].ph];
+    cardPhotoIdx = (cardPhotoIdx + 1) % photos.length;
+    document.getElementById('ph-inner').innerHTML = photoHTML(photos[cardPhotoIdx]);
+    document.querySelectorAll('.photo-dot').forEach((d, i) => d.classList.toggle('active', i === cardPhotoIdx));
+}
+
+function buildQuizCard() {
+    return `
+        <div class="card-title">🎮 愛情問答</div>
+        <div class="quiz-progress"><div class="quiz-bar" id="qbar" style="width:0%"></div></div>
+        <div class="quiz-q" id="qq"></div>
+        <div class="quiz-opts" id="qopts"></div>
+        <div class="quiz-fb" id="qfb"></div>`;
+}
+
+function showQuizQuestion() {
+    if (quizIdx >= QUIZ.length) { showQuizResult(); return; }
+    const q = QUIZ[quizIdx];
+    document.getElementById('qbar').style.width = (quizIdx / QUIZ.length * 100) + '%';
+    document.getElementById('qq').textContent = q.q;
+    document.getElementById('qfb').textContent = '';
+    const opts = document.getElementById('qopts');
+    opts.innerHTML = '';
+    q.opts.forEach((o, i) => {
+        const b = document.createElement('button');
+        b.className = 'quiz-opt'; b.textContent = o;
+        b.onclick = () => answerQuiz(i);
+        opts.appendChild(b);
+    });
+}
+
+function answerQuiz(i) {
+    const q = QUIZ[quizIdx];
+    document.querySelectorAll('.quiz-opt').forEach(b => b.onclick = null);
+    if (i === q.correct) { quizScore++; document.querySelectorAll('.quiz-opt')[i].classList.add('correct'); }
+    else { document.querySelectorAll('.quiz-opt')[i].classList.add('wrong'); document.querySelectorAll('.quiz-opt')[q.correct].classList.add('correct'); }
+    document.getElementById('qfb').textContent = (i === q.correct ? '✨ ' : '💭 ') + q.fb[i];
+    quizIdx++;
+    setTimeout(showQuizQuestion, 1700);
+}
+
+function showQuizResult() {
+    document.getElementById('qbar').style.width = '100%';
+    const msgs = ['要多了解我哦 😘','加油！','還不錯！😄','不錯不錯！😊','妳很了解我們！🥰','滿分！妳是最了解我的人 💕'];
+    document.getElementById('qq').innerHTML = `<div class="quiz-score-msg">${['😅','😄','😊','😊','🥰','🎉'][quizScore]} ${msgs[quizScore]}<br><small style="color:#aaa;font-size:.8rem">${quizScore} / ${QUIZ.length} 題答對</small></div>`;
+    document.getElementById('qopts').innerHTML = '';
+    document.getElementById('qfb').textContent = '';
+    setTimeout(() => {
+        const b = document.createElement('button');
+        b.className = 'btn-pink'; b.textContent = '繼續前進 →';
+        b.onclick = closeCard;
+        document.getElementById('qopts').appendChild(b);
+    }, 400);
+}
+
+function closeCard() {
+    const vid = document.querySelector('#ph-inner video');
+    if (vid) vid.pause();
+    document.getElementById('card-overlay').classList.remove('show');
+    unlockedStop = currentStop + 1;
+    refreshStops();
+}
+
+function growFlowersNear(stopIdx) {
+    const stop = STOPS[stopIdx];
+    const prev = STOPS[stopIdx - 1] || stop;
+    const map  = document.getElementById('s-map');
+    const emojis = ['🌸','🌼','🌺','🌻','🌷','🌸','🌸']; // 多一點粉花
+    let delay = 0;
+
+    function spawnFlower(x, y, extraOffset) {
+        setTimeout(() => {
+            const f = document.createElement('div');
+            f.className = 'map-grown-flower';
+            const ox = (Math.random() - 0.5) * (extraOffset || 14);
+            const oy = (Math.random() - 0.5) * (extraOffset || 9);
+            f.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            f.style.left      = (x + ox) + '%';
+            f.style.top       = (y + oy) + '%';
+            f.style.fontSize  = (.7 + Math.random() * .7) + 'rem';
+            f.style.transform = `rotate(${(Math.random()-0.5)*35}deg)`;
+            map.appendChild(f);
+        }, delay);
+        delay += 120;
+    }
+
+    // 停留點附近長 4~5 朵
+    const nearCount = 4 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < nearCount; i++) spawnFlower(stop.x, stop.y, 18);
+
+    // 路徑上均勻插入 5~7 朵
+    const pathCount = 5 + Math.floor(Math.random() * 3);
+    for (let i = 1; i <= pathCount; i++) {
+        const t  = i / (pathCount + 1);
+        const px = prev.x + (stop.x - prev.x) * t;
+        const py = prev.y + (stop.y - prev.y) * t;
+        spawnFlower(px, py, 8);
+    }
+}
+
+// =====================================================
+//  FINAL
+// =====================================================
+function showFinal() {
+    genStars('fstars');
+    confetti();
+    document.getElementById('final-overlay').classList.add('show');
+}
+
+function restartMap() {
+    document.getElementById('final-overlay').classList.remove('show');
+    currentStop = 0; unlockedStop = 1;
+    pikX = STOPS[0].x; pikY = STOPS[0].y;
+    placePikmin(STOPS[0].x, STOPS[0].y, false);
+    refreshStops();
+    document.getElementById('map-bar').textContent = '停留點 0 / 8';
+}
+
+// =====================================================
+//  HELPERS
+// =====================================================
+function genStars(id) {
+    const c = document.getElementById(id);
+    if (!c) return; c.innerHTML = '';
+    for (let i = 0; i < 80; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        const sz = Math.random() * 3 + 1;
+        s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${Math.random()*2+1}s;`;
+        c.appendChild(s);
+    }
+}
+
+function spawnPetals(id) {
+    const c = document.getElementById(id);
+    if (!c || c.childElementCount > 3) return;
+    c.innerHTML = '';
+    const cols = ['#ff6b9d','#ff8fab','#ffd4e5','#ffb3c6','#ffd54f','#c8e6c9'];
+    const rads = ['50% 0 50% 0','50%','50% 50% 0 50%'];
+    for (let i = 0; i < 22; i++) {
+        const p = document.createElement('div');
+        p.className = 'petal';
+        const sz = Math.random()*12+6;
+        p.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${rads[Math.floor(Math.random()*rads.length)]};animation-duration:${Math.random()*5+4}s;animation-delay:${Math.random()*5}s;`;
+        c.appendChild(p);
+    }
+}
+
+function confetti() {
+    const cols = ['#ff6b9d','#ffd54f','#66bb6a','#42a5f5','#ce93d8','#ff8a65'];
+    for (let i = 0; i < 100; i++) {
+        setTimeout(() => {
+            const el = document.createElement('div');
+            el.className = 'cbit';
+            const sz = Math.random()*10+5, drift = (Math.random()-.5)*220;
+            el.style.cssText = `left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${cols[Math.floor(Math.random()*cols.length)]};--drift:${drift}px;border-radius:${Math.random()>.5?'50%':'3px'};animation-duration:${Math.random()*2+2.5}s;animation-delay:${Math.random()*.8}s;`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 4500);
+        }, i * 40);
+    }
+}
+
+// =====================================================
+//  KEYBOARD (map only)
+// =====================================================
+document.addEventListener('keydown', e => {
+    if (currentScene === 's0' && e.key === 'Enter') openEnvelope();
+});
+
+// =====================================================
+//  BOOT
+// =====================================================
+window.addEventListener('load', () => {
+    genStars('stars0');
+    setTimeout(() => document.getElementById('loading').classList.add('hidden'), 1200);
+});
+
+window.addEventListener('resize', () => {
+    if (currentScene === 's-map') placePikmin(pikX, pikY, false);
+});
+</script>
+</body>
+</html>

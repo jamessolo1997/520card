@@ -1,0 +1,114 @@
+專案狀態：520 網頁卡片
+更新日期：2026-05-10
+檔案位置：C:\Users\2f\520card\index.html（單一自包含 HTML 檔）
+同資料夾還有：kirby-runningpress-start-final.gif（主角動圖）
+
+════════════════════════════════
+目前完成的功能
+════════════════════════════════
+
+【開場場景】
+  - 點信封打開 → 背景從深紫轉粉色 → 顯示「520」大字 + Kirby 動圖 + 出發按鈕
+  - 開場裝飾：3 隻 Kirby（pk-walk / pk-bounce / pk-walk），每隻 76×76px
+
+【角色】
+  - 主角改為 Kirby GIF（kirby-runningpress-start-final.gif）
+  - 地圖上 Kirby：72×72px，走路時上下浮動動畫（無旋轉）
+  - face-left class 用 scaleX(-1) 鏡像翻轉，向左走自動翻面
+  - JS 座標偏移：px = x% * vw - 36，py = y% * vh - 72
+
+【地圖主場景】
+  - 9 個節點（index 0~8），SVG 貝茲曲線路徑，虛線棕色小徑
+  - 順序解鎖：只能點下一個停留點（pulsing 金色動畫提示）
+  - 長花機制：點下停留點沿路徑長花（粉花 emoji，路徑花 + 停留花）
+  - 左上進度條：「停留點 X / 8」（共 8 個可走停靠點）
+
+【底部卡片 - 相片/影片】
+  - 支援多張照片：photos 陣列，點擊相框切換下一張
+  - 底部圓點指示目前第幾張（粉色圓點，當前用桃紅色）
+  - 右下角「點擊換張 →」提示（多張時才顯示）
+  - 支援影片（.mp4 / .mov / .webm）：黑底 contain 顯示，內建播放器
+  - 切換/關閉時自動 pause 影片
+  - 支援真實圖片路徑（.jpg/.png/.webp）或 emoji 佔位符
+
+【底部卡片 - 問答】
+  - 5 題選擇題，答對/答錯即時顯示顏色 + 回饋文字
+  - 進度條、最終得分訊息
+
+【結尾】
+  - 最後一個停靠點觸發全螢幕深紫結語 + 紙屑動畫
+  - 3 隻 Kirby 歡慶動畫，結語文字可自訂
+  - 「從頭再走一次」按鈕重置地圖
+
+════════════════════════════════
+目前 STOPS 資料結構（9 個節點）
+════════════════════════════════
+
+const STOPS = [
+    { x:50, y:90, icon:'🌿', label:'出發', type:'start' },
+    { x:22, y:78, icon:'💕', label:'第一次見面',   type:'photo', photos:['💕'], caption:'第一次見到妳的那天\n心跳加速，緊張又期待 🌸' },
+    { x:76, y:67, icon:'📸', label:'第一次拍貼機', type:'photo', photos:['📸'], caption:'第一次一起拍貼機\n每張都好可愛，留著一輩子 🎞️' },
+    { x:22, y:56, icon:'🌸', label:'第一次看花海', type:'photo', photos:['🌸'], caption:'花海裡的妳最漂亮\n那天的風景我都記得 🌺' },
+    { x:76, y:44, icon:'🎆', label:'第一次跨年',   type:'photo', photos:['🎆'], caption:'一起倒數的那個瞬間\n新的一年有妳真好 ✨' },
+    { x:22, y:33, icon:'🎂', label:'第一次做蛋糕', type:'photo', photos:['🎂'], caption:'一起手忙腳亂做蛋糕\n雖然不好吃，但過程超級好玩!! 🍰' },
+    { x:74, y:22, icon:'✈️', label:'第一次出國',   type:'photo', photos:['✈️'], caption:'第一次一起出國\n每個地方都因為有妳而特別 🌏' },
+    { x:28, y:12, icon:'🎮', label:'愛情問答', type:'quiz' },
+    { x:50, y:4,  icon:'💕', label:'給妳的話', type:'final' }
+];
+
+════════════════════════════════
+待完成（需要你提供）
+════════════════════════════════
+
+【照片/影片】
+  - 把實際照片放進 520card 資料夾（建議建子資料夾 ./photos/）
+  - 修改各 stop 的 photos 陣列，例如：
+      photos:['./photos/meet1.jpg', './photos/meet2.jpg']
+  - 影片同理：photos:['./photos/trip.mp4']
+  - 可混用：photos:['./photos/cake1.jpg', './photos/cake_video.mp4']
+
+【問答題目】
+  - QUIZ 陣列（5 題）目前是範例，改成你們實際的故事與答案
+
+【結語文字】
+  - #final-msg 的文字需要個人化
+  - #final-title「謝謝妳這一年多」可改成你想說的
+
+【稱呼/名字】
+  - .land-sub「給最特別的妳」可換成名字
+
+════════════════════════════════
+如何放到網路上（讓對方用手機看）
+════════════════════════════════
+
+方法一：Netlify Drop（最快，拖曳即上線）
+  1. 開瀏覽器前往 netlify.com/drop
+  2. 把整個 520card 資料夾拖進去
+  3. 自動產生網址，傳給對方即可
+
+方法二：GitHub Pages（免費，可更新）
+  - 需要 GitHub 帳號
+  - git init → git add . → git commit → push 到 GitHub
+  - 開啟 Settings → Pages → Source: main branch
+
+════════════════════════════════
+已知 Bug 與修法記錄
+════════════════════════════════
+
+問題                    根因                                    修法
+地圖畫面空白            #s-map { position:relative } 覆蓋了 .scene { position:fixed }   移除 position:relative
+點停留點沒反應          #stops-layer 設 pointer-events:none 擋住子元素                   移除 stops-layer 的 pointer-events:none
+classList.remove 報錯   'walking face-left' 包含空格，不是合法 token                     改為 classList.remove('face-left', 'walking')
+最上方節點重疊          y 值太接近                                                        重新分配 9 個節點的 y 座標（y:90 到 y:4）
+
+════════════════════════════════
+換電腦繼續開發
+════════════════════════════════
+
+需要帶走的檔案：
+  - index.html
+  - kirby-runningpress-start-final.gif
+  - 照片/影片資料夾（如果已放入）
+  - 這個 .txt 狀態檔
+
+在新 session 把這份記憶貼給 Claude，就可以無縫繼續。
